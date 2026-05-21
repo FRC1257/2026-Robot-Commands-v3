@@ -13,8 +13,10 @@ import org.wpilib.command3.Scheduler;
 import org.wpilib.command3.Trigger;
 import org.wpilib.math.trajectory.TrapezoidProfile;
 import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Voltage;
 
+import frc.robot.Mechanisms.Shooter.ShooterTrajectoryCalculator;
 import frc.robot.Mechanisms.Shooter.Hood.HoodIO.HoodIOInputs;
 import frc.robot.util.Units.UnitUtil;
 
@@ -62,6 +64,11 @@ public class Hood extends Mechanism {
                 co.yield();
             }
         });
+    }
+
+    public Command runTargeted(Supplier<Distance> targetDistance) {
+        return runAngleCommand(() -> ShooterTrajectoryCalculator.getInstance().getParameters(targetDistance.get()).hoodAngle())
+                .named("Hood/Targeted");
     }
 
     public Command runStowPreset() {

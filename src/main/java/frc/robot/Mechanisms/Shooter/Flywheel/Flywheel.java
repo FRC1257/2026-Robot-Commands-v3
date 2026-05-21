@@ -10,8 +10,10 @@ import org.wpilib.command3.NeedsNameBuilderStage;
 import org.wpilib.command3.Scheduler;
 import org.wpilib.command3.Trigger;
 import org.wpilib.units.measure.AngularVelocity;
+import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Voltage;
 
+import frc.robot.Mechanisms.Shooter.ShooterTrajectoryCalculator;
 import frc.robot.Mechanisms.Shooter.Flywheel.FlywheelIO.FlywheelIOInputs;
 
 public class Flywheel extends Mechanism {
@@ -46,6 +48,11 @@ public class Flywheel extends Mechanism {
             goalVelocity = RadiansPerSecond.zero();
             io.stop();
         });
+    }
+
+    public Command runTargeted(Supplier<Distance> targetDistance) {
+        return runVelocityCommand(() -> ShooterTrajectoryCalculator.getInstance().getParameters(targetDistance.get()).flywheelVelocity())
+                .named("Flywheel/Targeted");
     }
 
     public Command runClosePresetVelocity() {
