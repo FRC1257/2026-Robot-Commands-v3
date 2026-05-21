@@ -36,17 +36,13 @@ public class Flywheel extends Mechanism {
     }
 
     private NeedsNameBuilderStage runVoltageCommand(Supplier<Voltage> volts) {
-        return runRepeatedly(() -> io.setVoltage(volts.get()))
-                .whenCanceled(io::stop);
+        return runRepeatedly(() -> io.setVoltage(volts.get()));
     }
 
     private NeedsNameBuilderStage runVelocityCommand(Supplier<AngularVelocity> velocity) {
         return runRepeatedly(() -> {
             goalVelocity = velocity.get();
             io.setVelocity(velocity.get());
-        }).whenCanceled(() -> {
-            goalVelocity = RadiansPerSecond.zero();
-            io.stop();
         });
     }
 
