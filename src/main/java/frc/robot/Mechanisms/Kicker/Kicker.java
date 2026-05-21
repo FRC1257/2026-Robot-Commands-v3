@@ -23,8 +23,6 @@ public class Kicker extends Mechanism {
 
     private AngularVelocity goalVelocity = RadiansPerSecond.zero();
 
-    private final Debouncer unjamDebouncer = new Debouncer(0.5, DebounceType.kRising);
-
     public Kicker(KickerIO io) {
         this.io = io;
         
@@ -35,6 +33,13 @@ public class Kicker extends Mechanism {
 
     public Trigger atGoalVelocity() {
         return new Trigger(() -> inputs.leaderVelocityRadsPerSec.isNear(goalVelocity, KickerConstants.VELOCITY_TOLERANCE));
+    }
+
+    public Trigger isJammed() {
+        return new Trigger(
+            () -> inputs.leaderVelocityRadsPerSec.lte(KickerConstants.KICKER_JAMMED_VELOCITY) 
+            && inputs.leaderCurrentAmps.gte(KickerConstants.KICKER_JAMMED_CURRENT)
+        ).debounce(KickerConstants.KICKER_JAMMED_TIME, DebounceType.kRising);
     }
 
     private NeedsNameBuilderStage runVoltageCommand(Supplier<Voltage> volts) {
@@ -60,7 +65,7 @@ public class Kicker extends Mechanism {
 
     public Command runUnjam() {
         return runVelocityCommand(() -> KickerConstants.UNJAM_VELOCITY)
-                .until(() -> unjamDebouncer.calculate(inputs.leaderCurrentAmps.lt(KickerConstants.UNJAM_CURRENT_THRESHOLD)))
+                .until(isJammed().negate())
                 .withPriority(Command.HIGHEST_PRIORITY)
                 .named("Kicker/Unjam");
     }

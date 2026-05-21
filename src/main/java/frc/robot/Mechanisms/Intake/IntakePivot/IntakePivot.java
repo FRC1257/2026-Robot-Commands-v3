@@ -74,4 +74,5 @@ public class IntakePivot extends Mechanism {
                 .named("IntakePivot/StowAngle");
     }
     
+    
 }
