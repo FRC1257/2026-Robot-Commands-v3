@@ -48,21 +48,21 @@ public class Kicker extends Mechanism {
         });
     }
 
-    public Command runEjectPreset() {
-        return runVelocityCommand(() -> KickerConstants.EJECT_PRESET)
-                .named("Kicker/EjectPreset");
+    public Command runEject() {
+        return runVelocityCommand(() -> KickerConstants.EJECT_VELOCITY)
+                .named("Kicker/Eject");
     }
 
-    public Command runIntakePreset() {
-        return runVelocityCommand(() -> KickerConstants.INTAKE_PRESET)
-                .named("Kicker/IntakePreset");
+    public Command runIntake() {
+        return runVelocityCommand(() -> KickerConstants.INTAKE_VELOCITY)
+                .named("Kicker/Intake");
     }
 
-    public Command runUnjamPreset() {
-        return runVelocityCommand(() -> KickerConstants.UNJAM_PRESET)
+    public Command runUnjam() {
+        return runVelocityCommand(() -> KickerConstants.UNJAM_VELOCITY)
                 .until(() -> unjamDebouncer.calculate(inputs.leaderCurrentAmps.lt(KickerConstants.UNJAM_CURRENT_THRESHOLD)))
                 .withPriority(Command.HIGHEST_PRIORITY)
-                .named("Kicker/UnjamPreset");
+                .named("Kicker/Unjam");
     }
         
 }
