@@ -8,6 +8,7 @@ import org.wpilib.command3.Command;
 import org.wpilib.command3.Mechanism;
 import org.wpilib.command3.NeedsNameBuilderStage;
 import org.wpilib.command3.Scheduler;
+import org.wpilib.command3.Trigger;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Voltage;
 
@@ -28,6 +29,10 @@ public class Flywheel extends Mechanism {
         });
     }
 
+    public Trigger atGoalVelocity() {
+        return new Trigger(() -> inputs.leaderVelocityRadsPerSec.isNear(goalVelocity, FlywheelConstants.VELOCITY_TOLERANCE));
+    }
+
     private NeedsNameBuilderStage runVoltageCommand(Supplier<Voltage> volts) {
         return runRepeatedly(() -> io.setVoltage(volts.get()))
                 .whenCanceled(io::stop);
@@ -44,22 +49,18 @@ public class Flywheel extends Mechanism {
     }
 
     public Command runClosePresetVelocity() {
-        return runVelocityCommand(() -> RadiansPerSecond.of(200))
+        return runVelocityCommand(() -> FlywheelConstants.CLOSE_PRESET)
                 .named("Flywheel/ClosePresetVelocity");
     }
 
     public Command runFarPresetVelocity() {
-        return runVelocityCommand(() -> RadiansPerSecond.of(300))
+        return runVelocityCommand(() -> FlywheelConstants.FAR_PRESET)
                 .named("Flywheel/FarPresetVelocity");
     }
 
     public Command runIdleVelocity() {
-        return runVelocityCommand(() -> RadiansPerSecond.of(50))
+        return runVelocityCommand(() -> FlywheelConstants.IDLE_PRESET)
                 .named("Flywheel/IdleVelocity");
     }
-
-
-
-
     
 }
