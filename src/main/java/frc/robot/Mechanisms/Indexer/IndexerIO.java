@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Indexer;
+package frc.robot.mechanisms.Indexer;
 
 import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Celsius;
@@ -28,5 +28,5 @@ public interface IndexerIO {
     public default void setVoltage(Voltage volts) {}
 
     public default void stop() {}
-    
+
 }

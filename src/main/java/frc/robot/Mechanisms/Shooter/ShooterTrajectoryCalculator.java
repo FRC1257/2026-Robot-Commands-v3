@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Shooter;
+package frc.robot.mechanisms.Shooter;
 
 import org.wpilib.math.interpolation.InterpolatingTreeMap;
 import org.wpilib.units.measure.Angle;

@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Intake.IntakePivot;
+package frc.robot.mechanisms.Intake.IntakePivot;
 
 import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Celsius;

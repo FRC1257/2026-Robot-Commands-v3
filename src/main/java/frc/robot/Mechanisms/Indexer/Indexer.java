@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Indexer;
+package frc.robot.mechanisms.Indexer;
 
 import java.util.function.Supplier;
 
@@ -8,7 +8,7 @@ import org.wpilib.command3.NeedsNameBuilderStage;
 import org.wpilib.command3.Scheduler;
 import org.wpilib.units.measure.Voltage;
 
-import frc.robot.Mechanisms.Indexer.IndexerIO.IndexerIOInputs;
+import frc.robot.mechanisms.Indexer.IndexerIO.IndexerIOInputs;
 
 public class Indexer extends Mechanism {
 

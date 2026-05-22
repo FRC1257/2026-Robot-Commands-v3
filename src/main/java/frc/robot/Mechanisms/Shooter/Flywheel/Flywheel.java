@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Shooter.Flywheel;
+package frc.robot.mechanisms.Shooter.Flywheel;
 
 import static org.wpilib.units.Units.RadiansPerSecond;
 
@@ -13,8 +13,8 @@ import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Voltage;
 
-import frc.robot.Mechanisms.Shooter.ShooterTrajectoryCalculator;
-import frc.robot.Mechanisms.Shooter.Flywheel.FlywheelIO.FlywheelIOInputs;
+import frc.robot.mechanisms.Shooter.ShooterTrajectoryCalculator;
+import frc.robot.mechanisms.Shooter.Flywheel.FlywheelIO.FlywheelIOInputs;
 
 public class Flywheel extends Mechanism {
 

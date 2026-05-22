@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Intake.IntakePivot;
+package frc.robot.mechanisms.Intake.IntakePivot;
 
 import static org.wpilib.units.Units.Radians;
 import static org.wpilib.units.Units.RadiansPerSecond;
@@ -14,7 +14,7 @@ import org.wpilib.math.trajectory.TrapezoidProfile;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Voltage;
 
-import frc.robot.Mechanisms.Intake.IntakePivot.IntakePivotIO.IntakePivotIOInputs;
+import frc.robot.mechanisms.Intake.IntakePivot.IntakePivotIO.IntakePivotIOInputs;
 import frc.robot.util.Units.UnitUtil;
 
 public class IntakePivot extends Mechanism {
@@ -73,6 +73,6 @@ public class IntakePivot extends Mechanism {
         return runAngleCommand(() -> IntakePivotConstants.STOW_ANGLE)
                 .named("IntakePivot/StowAngle");
     }
-    
+
     
 }

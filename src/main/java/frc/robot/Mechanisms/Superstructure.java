@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms;
+package frc.robot.mechanisms;
 
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.Seconds;
@@ -11,25 +11,22 @@ import org.wpilib.command3.Mechanism;
 import org.wpilib.command3.StateMachine;
 import org.wpilib.command3.Trigger;
 import org.wpilib.command3.StateMachine.State;
+import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.units.measure.Distance;
 
-import frc.robot.Mechanisms.Indexer.Indexer;
-import frc.robot.Mechanisms.Kicker.Kicker;
-import frc.robot.Mechanisms.Shooter.Flywheel.Flywheel;
-import frc.robot.Mechanisms.Shooter.Hood.Hood;
+import frc.robot.Robot;
+import frc.robot.mechanisms.Indexer.Indexer;
+import frc.robot.mechanisms.Kicker.Kicker;
+import frc.robot.mechanisms.Shooter.Flywheel.Flywheel;
+import frc.robot.mechanisms.Shooter.Hood.Hood;
 
-public class Superstructure extends Mechanism {
-    
-    private final Indexer indexer;
-    private final Kicker kicker;
-    private final Flywheel flywheel;
-    private final Hood hood;
+public class Superstructure {
 
-    public Superstructure(Indexer indexer, Kicker kicker, Flywheel flywheel, Hood hood) {
-        this.indexer = indexer;
-        this.kicker = kicker;
-        this.flywheel = flywheel;
-        this.hood = hood;
+    private final Robot robot;
+    private final Pose2d dummyPose = new Pose2d();
+
+    public Superstructure(Robot robot) {
+        this.robot = robot;
     }
 
     public StateMachine build() {
@@ -39,18 +36,18 @@ public class Superstructure extends Mechanism {
         State TARGETED_SHOOTING = stateMachine.addState(
             Command.noRequirements(coroutine -> {
                 coroutine.fork(
-                    flywheel.runTargeted(dummySupplier),
-                    hood.runTargeted(dummySupplier)
+                    robot.flywheel.runTargeted(dummySupplier),
+                    robot.hood.runTargeted(dummySupplier)
                 );
 
-                flywheel.atGoalVelocity().and(hood.atGoalAngle())
+                robot.flywheel.atGoalVelocity().and(robot.hood.atGoalAngle())
                     .debounce(Seconds.of(0.5))
                     .whileTrue(
-                        kicker.runIntake().alongWith(indexer.runIntake()).named("Superstructure/TargetedShooting/Feeding")
+                        robot.kicker.runIntake().alongWith(robot.indexer.runIntake()).named("Superstructure/TargetedShooting/Feeding")
                     );
                 
-                kicker.isJammed()
-                    .onTrue(kicker.runUnjam());
+                robot.kicker.isJammed()
+                    .onTrue(robot.kicker.runUnjam());
                 
                 coroutine.park();
             }).named("Superstructure/TargetedShooting")
@@ -59,18 +56,18 @@ public class Superstructure extends Mechanism {
         State CLOSE_PRESET_SHOOTING = stateMachine.addState(
             Command.noRequirements(coroutine -> {
                 coroutine.fork(
-                    flywheel.runClosePresetVelocity(),
-                    hood.runClosePreset()
+                    robot.flywheel.runClosePresetVelocity(),
+                    robot.hood.runClosePreset()
                 );
 
-                flywheel.atGoalVelocity().and(hood.atGoalAngle())
+                robot.flywheel.atGoalVelocity().and(robot.hood.atGoalAngle())
                     .debounce(Seconds.of(0.5))
                     .whileTrue(
-                        kicker.runIntake().alongWith(indexer.runIntake()).named("Superstructure/ClosePresetShooting/Feeding")
+                        robot.kicker.runIntake().alongWith(robot.indexer.runIntake()).named("Superstructure/ClosePresetShooting/Feeding")
                     );
                 
-                kicker.isJammed()
-                    .onTrue(kicker.runUnjam());
+                robot.kicker.isJammed()
+                    .onTrue(robot.kicker.runUnjam());
                 
                 coroutine.park();
             }).named("Superstructure/ClosePresetShooting")
@@ -79,18 +76,18 @@ public class Superstructure extends Mechanism {
         State FAR_PRESET_SHOOTING = stateMachine.addState(
             Command.noRequirements(coroutine -> {
                 coroutine.fork(
-                    flywheel.runFarPresetVelocity(),
-                    hood.runStowPreset()
+                    robot.flywheel.runFarPresetVelocity(),
+                    robot.hood.runStowPreset()
                 );
 
-                flywheel.atGoalVelocity().and(hood.atGoalAngle())
+                robot.flywheel.atGoalVelocity().and(robot.hood.atGoalAngle())
                     .debounce(Seconds.of(0.5))
                     .whileTrue(
-                        kicker.runIntake().alongWith(indexer.runIntake()).named("Superstructure/FarPresetShooting/Feeding")
+                        robot.kicker.runIntake().alongWith(robot.indexer.runIntake()).named("Superstructure/FarPresetShooting/Feeding")
                     );
                 
-                kicker.isJammed()
-                    .onTrue(kicker.runUnjam());
+                robot.kicker.isJammed()
+                    .onTrue(robot.kicker.runUnjam());
                 
                 coroutine.park();
             }).named("Superstructure/FarPresetShooting")
@@ -99,17 +96,37 @@ public class Superstructure extends Mechanism {
         State STOW = stateMachine.addState(
             Command.noRequirements(coroutine -> {
                 coroutine.fork(
-                    flywheel.runIdleVelocity(),
-                    hood.runStowPreset()
+                    robot.flywheel.runIdleVelocity(),
+                    robot.hood.runStowPreset()
                 );
 
                 coroutine.park();
             }).named("Superstructure/Stow")
         );
 
+        State IDLE = stateMachine.addState(
+            Command.noRequirements(
+                coroutine -> {
+                    coroutine.fork(
+                        robot.indexer.runIdle(),
+                        robot.kicker.runIdle(),
+                        robot.flywheel.runIdleVelocity(),
+                        robot.hood.runTargeted(dummySupplier)
+                    );
+            }).named("Superstructure/Idle")
+        );
+
+        STOW.switchTo(IDLE).when(robot.dummyTrenchZone.contains(() -> dummyPose.getTranslation()).negate());
+
+
+        stateMachine.switchFromAny().to(STOW).when(robot.dummyTrenchZone.contains(() -> dummyPose.getTranslation()));
+        stateMachine.switchFromAny(CLOSE_PRESET_SHOOTING, FAR_PRESET_SHOOTING, IDLE).to(TARGETED_SHOOTING).when(robot.driver.rightBumper());
+        stateMachine.switchFromAny(TARGETED_SHOOTING, FAR_PRESET_SHOOTING, IDLE).to(CLOSE_PRESET_SHOOTING).when(robot.driver.leftPaddle1());
+        stateMachine.switchFromAny(TARGETED_SHOOTING, CLOSE_PRESET_SHOOTING, IDLE).to(FAR_PRESET_SHOOTING).when(robot.driver.rightPaddle1());
+
+        stateMachine.setInitialState(IDLE);
 
         return stateMachine;
     }
-
 
 }

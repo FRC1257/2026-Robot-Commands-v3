@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Shooter.Hood;
+package frc.robot.mechanisms.Shooter.Hood;
 
 import static org.wpilib.units.Units.Radians;
 

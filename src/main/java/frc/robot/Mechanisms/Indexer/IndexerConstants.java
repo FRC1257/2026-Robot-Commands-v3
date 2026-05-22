@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Indexer;
+package frc.robot.mechanisms.Indexer;
 
 import static org.wpilib.units.Units.Volts;
 
@@ -9,6 +9,6 @@ public class IndexerConstants {
     public static final Voltage INTAKE_VOLTAGE = Volts.of(6);
     public static final Voltage EJECT_VOLTAGE = Volts.of(-6);
     public static final Voltage IDLE_VOLTAGE = Volts.of(0);
-    
+
     
 }

@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Kicker;
+package frc.robot.mechanisms.Kicker;
 
 import static org.wpilib.units.Units.RadiansPerSecond;
 
@@ -14,7 +14,7 @@ import org.wpilib.math.filter.Debouncer.DebounceType;
 import org.wpilib.units.measure.AngularVelocity;
 import org.wpilib.units.measure.Voltage;
 
-import frc.robot.Mechanisms.Kicker.KickerIO.KickerIOInputs;
+import frc.robot.mechanisms.Kicker.KickerIO.KickerIOInputs;
 
 public class Kicker extends Mechanism {
     
@@ -61,6 +61,11 @@ public class Kicker extends Mechanism {
     public Command runIntake() {
         return runVelocityCommand(() -> KickerConstants.INTAKE_VELOCITY)
                 .named("Kicker/Intake");
+    }
+
+    public Command runIdle() {
+        return runVelocityCommand(() -> KickerConstants.IDLE_VELOCITY)
+                .named("Kicker/Idle");
     }
 
     public Command runUnjam() {

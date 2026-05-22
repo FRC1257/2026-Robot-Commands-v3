@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Intake.IntakeRollers;
+package frc.robot.mechanisms.Intake.IntakeRollers;
 
 import java.util.function.Supplier;
 
@@ -8,7 +8,7 @@ import org.wpilib.command3.NeedsNameBuilderStage;
 import org.wpilib.command3.Scheduler;
 import org.wpilib.units.measure.Voltage;
 
-import frc.robot.Mechanisms.Intake.IntakeRollers.IntakeRollersIO.IntakeRollersIOInputs;
+import frc.robot.mechanisms.Intake.IntakeRollers.IntakeRollersIO.IntakeRollersIOInputs;
 
 public class IntakeRollers extends Mechanism {
 

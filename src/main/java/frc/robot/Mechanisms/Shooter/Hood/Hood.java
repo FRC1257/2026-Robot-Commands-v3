@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Shooter.Hood;
+package frc.robot.mechanisms.Shooter.Hood;
 
 import static org.wpilib.units.Units.Radians;
 import static org.wpilib.units.Units.RadiansPerSecond;
@@ -16,8 +16,8 @@ import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.Voltage;
 
-import frc.robot.Mechanisms.Shooter.ShooterTrajectoryCalculator;
-import frc.robot.Mechanisms.Shooter.Hood.HoodIO.HoodIOInputs;
+import frc.robot.mechanisms.Shooter.ShooterTrajectoryCalculator;
+import frc.robot.mechanisms.Shooter.Hood.HoodIO.HoodIOInputs;
 import frc.robot.util.Units.UnitUtil;
 
 public class Hood extends Mechanism {

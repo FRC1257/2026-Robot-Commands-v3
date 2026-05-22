@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Kicker;
+package frc.robot.mechanisms.Kicker;
 
 import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Celsius;
@@ -30,5 +30,5 @@ public interface KickerIO {
     public default void setVelocity(AngularVelocity velocity) {}
 
     public default void stop() {}
-    
+
 }

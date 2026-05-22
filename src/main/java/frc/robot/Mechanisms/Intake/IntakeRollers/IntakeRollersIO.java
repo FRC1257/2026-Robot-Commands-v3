@@ -1,4 +1,4 @@
-package frc.robot.Mechanisms.Intake.IntakeRollers;
+package frc.robot.mechanisms.Intake.IntakeRollers;
 
 import static org.wpilib.units.Units.Amps;
 import static org.wpilib.units.Units.Celsius;
