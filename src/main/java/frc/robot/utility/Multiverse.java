@@ -34,13 +34,12 @@ import java.util.function.Supplier;
  * </ol>
  *
  * <p>Splitting the pipeline this way keeps reflection in one place, makes the IR
- * inspectable from tests, and leaves the back-end pluggable (Graphviz, PlantUML,
- * AdvantageScope, etc.).
+ * inspectable from tests, and leaves the back-end pluggable (Graphviz, PlantUML, etc.).
  *
  * <p>Usage:
  * <pre>{@code
  * StateMachine sm = ...;          // fully built; setInitialState already called
- * String mermaid = StateMachineMermaid.toMermaid(sm);
+ * String mermaid = Multiverse.toMermaid(sm);
  * }</pre>
  *
  * <p>Condition labels default to ordinal placeholders ({@code t0}, {@code c0}, ...). For
@@ -48,11 +47,11 @@ import java.util.function.Supplier;
  * <pre>{@code
  * BooleanSupplier hasNote = () -> sensor.get();
  * Map<BooleanSupplier, String> labels = Map.of(hasNote, "hasNote");
- * String mermaid = StateMachineMermaid.toMermaid(sm, ConditionLabeler.from(labels));
+ * String mermaid = Multiverse.toMermaid(sm, ConditionLabeler.from(labels));
  * }</pre>
  */
-public final class StateMachineMermaid {
-    private StateMachineMermaid() {}
+public final class Multiverse {
+    private Multiverse() {}
  
     // ---------------------------------------------------------------- API
  
@@ -392,35 +391,112 @@ public final class StateMachineMermaid {
     }
 
     public static void main(String[] args) {
-        BooleanSupplier trigger      = () -> false;
-        BooleanSupplier readyToShoot = () -> false;
-        BooleanSupplier lostSpeed    = () -> false;
-        BooleanSupplier cancel       = () -> false;
- 
-        StateMachine sm = new StateMachine("Shooter");
-        State idle   = sm.addState(named("Idle"));
-        State spinup = sm.addState(named("Spinup"));
-        State aim    = sm.addState(named("Aim"));
-        State shoot  = sm.addState(named("Shoot"));
-        State reset  = sm.addState(named("Reset"));
-        sm.setInitialState(idle);
- 
-        idle.switchTo(spinup).when(trigger);
-        spinup.switchTo(aim).whenComplete();
-        aim.switchTo(shoot).when(readyToShoot);
-        aim.switchTo(spinup).whenCompleteAnd(lostSpeed);
-        shoot.switchTo(reset).whenComplete();
-        reset.switchTo(idle).whenComplete();
-        sm.switchFromAny().to(idle).when(cancel);
- 
+
+        BooleanSupplier homeButton = () -> false;
+        BooleanSupplier coralPickupButton = () -> false;
+        BooleanSupplier hasCoral = () -> false;
+
+        BooleanSupplier hasAlgae = () -> false;
+        BooleanSupplier homeButtonAndHasAlgae = () -> homeButton.getAsBoolean() && hasAlgae.getAsBoolean();
+        BooleanSupplier homeButtonAndHasNoAlgae = () -> homeButton.getAsBoolean() && !hasAlgae.getAsBoolean();
+
+        BooleanSupplier l1ScoreButton = () -> false;
+        BooleanSupplier l2ScoreButton = () -> false;
+        BooleanSupplier l3ScoreButton = () -> false;
+        BooleanSupplier l4ScoreButton = () -> false;
+
+        BooleanSupplier l1ScoreButtonAndHasCoral = () -> l1ScoreButton.getAsBoolean() && hasCoral.getAsBoolean();
+        BooleanSupplier l2ScoreButtonAndHasCoral = () -> l2ScoreButton.getAsBoolean() && hasCoral.getAsBoolean();
+        BooleanSupplier l3ScoreButtonAndHasCoral = () -> l3ScoreButton.getAsBoolean() && hasCoral.getAsBoolean();
+        BooleanSupplier l4ScoreButtonAndHasCoral = () -> l4ScoreButton.getAsBoolean() && hasCoral.getAsBoolean();
+
+        BooleanSupplier l1ScoreButtonAndHasAlgae = () -> l1ScoreButton.getAsBoolean() && hasAlgae.getAsBoolean();
+        BooleanSupplier l4ScoreButtonAndHasAlgae = () -> l4ScoreButton.getAsBoolean() && hasAlgae.getAsBoolean();
+
+        BooleanSupplier algaeFloorPickupButton = () -> false;
+
+        BooleanSupplier scoreButton = () -> false;
+
+
+        var sm = new StateMachine("Arm and Elevator");
+
+        State home = sm.addState(named("Home"));
+        State coralPickup = sm.addState(named("Coral Pickup"));
+        home.switchTo(coralPickup).when(coralPickupButton);
+        coralPickup.switchTo(home).when(homeButton);
+
+        State l1Score = sm.addState(named("L1 Score"));
+        State l2Score = sm.addState(named("L2 Score"));
+        State l3Score = sm.addState(named("L3 Score"));
+        State l4Score = sm.addState(named("L4 Score"));
+        State spitScoreCoral = sm.addState(named("Spit Score Coral"));
+        State l2LowerScore = sm.addState(named("L2 Lower Score"));
+        State l3LowerScore = sm.addState(named("L3 Lower Score"));
+        State l4LowerScore = sm.addState(named("L4 Lower Score"));
+
+        home.switchTo(l1Score).when(l1ScoreButtonAndHasCoral);
+        home.switchTo(l2Score).when(l2ScoreButtonAndHasCoral);
+        home.switchTo(l3Score).when(l3ScoreButtonAndHasCoral);
+        home.switchTo(l4Score).when(l4ScoreButtonAndHasCoral);
+
+        l1Score.switchTo(spitScoreCoral).when(scoreButton);
+        l2Score.switchTo(spitScoreCoral).when(scoreButton);
+        l3Score.switchTo(spitScoreCoral).when(scoreButton);
+        l4Score.switchTo(spitScoreCoral).when(scoreButton);
+
+        sm.switchFromAny(spitScoreCoral, l2LowerScore, l3LowerScore, l4LowerScore)
+            .to(home)
+            .when(homeButton);
+        
+        State algaeHome = sm.addState(named("Algae Home"));
+        State algaeFloorPickup = sm.addState(named("Algae Floor Pickup"));
+        State l2AlgaePickup = sm.addState(named("L2 Algae Pickup"));
+        State l3AlgaePickup = sm.addState(named("L3 Algae Pickup"));
+        State processorScorePosition = sm.addState(named("Processor Score Position"));
+        State netScorePosition = sm.addState(named("Net Score Position"));
+
+        home.switchTo(algaeHome).when(algaeFloorPickupButton);
+        home.switchTo(l2AlgaePickup).when(l2ScoreButton);
+        home.switchTo(l3AlgaePickup).when(l3ScoreButton);
+
+        sm.switchFromAny(algaeFloorPickup, l2AlgaePickup, l3AlgaePickup)
+            .to(algaeHome)
+            .when(homeButtonAndHasAlgae);
+        
+        algaeHome.switchTo(netScorePosition).when(l4ScoreButtonAndHasAlgae);
+        algaeHome.switchTo(processorScorePosition).when(l1ScoreButtonAndHasAlgae);
+
+        netScorePosition.switchTo(algaeHome).when(homeButtonAndHasAlgae);
+        netScorePosition.switchTo(processorScorePosition).when(l1ScoreButtonAndHasAlgae);
+        netScorePosition.switchTo(home).when(homeButtonAndHasNoAlgae);
+
+        processorScorePosition.switchTo(algaeHome).when(homeButtonAndHasAlgae);
+        processorScorePosition.switchTo(netScorePosition).when(l4ScoreButtonAndHasAlgae);
+        processorScorePosition.switchTo(home).when(homeButtonAndHasNoAlgae);
+
+
         Map<BooleanSupplier, String> labels = new IdentityHashMap<>();
-        labels.put(trigger,      "trigger");
-        labels.put(readyToShoot, "readyToShoot");
-        labels.put(lostSpeed,    "lostSpeed");
-        labels.put(cancel,       "cancel");
- 
-        System.out.println(StateMachineMermaid.toMermaid(
-            sm, StateMachineMermaid.ConditionLabeler.from(labels)));
+        labels.put(homeButton, "homeButton");
+        labels.put(coralPickupButton, "coralPickupButton");
+        labels.put(hasCoral, "hasCoral");
+        labels.put(hasAlgae, "hasAlgae");
+        labels.put(homeButtonAndHasAlgae, "homeButton && hasAlgae");
+        labels.put(homeButtonAndHasNoAlgae, "homeButton && !hasAlgae");
+        labels.put(l1ScoreButton, "l1ScoreButton");
+        labels.put(l2ScoreButton, "l2ScoreButton");
+        labels.put(l3ScoreButton, "l3ScoreButton");
+        labels.put(l4ScoreButton, "l4ScoreButton");
+        labels.put(l1ScoreButtonAndHasCoral, "l1ScoreButton && hasCoral");
+        labels.put(l2ScoreButtonAndHasCoral, "l2ScoreButton && hasCoral");
+        labels.put(l3ScoreButtonAndHasCoral, "l3ScoreButton && hasCoral");
+        labels.put(l4ScoreButtonAndHasCoral, "l4ScoreButton && hasCoral");
+        labels.put(l1ScoreButtonAndHasAlgae, "l1ScoreButton && hasAlgae");
+        labels.put(l4ScoreButtonAndHasAlgae, "l4ScoreButton && hasAlgae");
+        labels.put(algaeFloorPickupButton, "algaeFloorPickupButton");
+        labels.put(scoreButton, "scoreButton");
+        
+        System.out.println(Multiverse.toMermaid(
+            sm, Multiverse.ConditionLabeler.from(labels)));
     }
  
     private static Command named(String name) {
